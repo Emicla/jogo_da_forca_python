@@ -113,12 +113,12 @@ def opcoes_usuario(vidas, palavra_oculta, dicas_pedidas, dicas):
             print("Opção inválida")
 
 def registrar(informacoes):
-    arquivo = open("Registro de partidas.txt","w")
+    arquivo = open("Registro de partidas.txt", "w")
     arquivo.write(informacoes)
     arquivo.close()
 
 def ler_registro():
-    arquivo = open("Registro de partidas.txt","r")
+    arquivo = open("Registro de partidas.txt", "r")
     conteudo = arquivo.readlines()
     arquivo.close()
     return conteudo
