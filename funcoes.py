@@ -1,4 +1,4 @@
-import os, time
+import os, time, unicodedata
 
 def limpar():
     os.system("cls")
@@ -29,6 +29,8 @@ def mostrar_vitoria(vencedor, nome_vencedor, dados):
     print("A palavra é: ",dados[2])
     print("O %s %s ganhou\n"%(vencedor, nome_vencedor))
 
+    print("Histórico:")
+    print()
     print(''.join(ler_registro()))
     print()
 
@@ -41,21 +43,30 @@ def pede_dados(perguntas):
     vez = 0
     while vez < len(perguntas):
         resposta = input(perguntas[vez])
-        if vez == 1:
+        try:
+            resposta = int(resposta)
             limpar()
+            print("Não pode ter números")
+            continue
+        except:
+            if vez == 1:
+                limpar()
 
-        if resposta != "" and resposta != " ":
-            respostas.append(resposta)
-            vez = vez + 1
+            if len(resposta) < 2:
+                limpar()
+                print("Deve ter 2 ou mais letras")
 
-        elif resposta == "" or resposta == " ":
-            limpar()
-            print("Preencha corretamente")
-            
+            elif resposta[0] == " " or resposta[1] == " ":
+                limpar()
+                print("Deve ter mais de 2 letras o primeiro nome e sem espaços na frente")
+
+            else:
+                respostas.append(resposta)
+                vez = vez + 1 
     return respostas
 
 def monta_oculta(oculta, palavra_chave):
-    for posicao, letra in enumerate(palavra_chave):
+    for letra in palavra_chave:
         if letra == " ":
             oculta = oculta + " "
         else:
@@ -67,15 +78,20 @@ def pede_dicas():
     vez = 1
     while vez < 4:
         dica = input("Informe a Dica %d: "%vez)
-        if dica == "" or dica == " ":
+        if len(dica) == 0:
             limpar()
             print("Preencha corretamente")
+
+        elif dica[0] == " ":
+            limpar()
+            print("Não pode ter espaços antes da dica")
+
         else:
             array_dicas.append(dica)
             vez = vez + 1
     return array_dicas
 
-def escolha_usuario(vidas, palavra_oculta, dicas_pedidas):
+def opcoes_usuario(vidas, palavra_oculta, dicas_pedidas, dicas):
     while True:
         try:
             escolha = int(input("Informe sua escolha: "))
@@ -84,12 +100,14 @@ def escolha_usuario(vidas, palavra_oculta, dicas_pedidas):
                 monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas)
                 print("Opção inválida")
 
-            elif escolha == 1 and dicas_pedidas > 3:
+            elif escolha == 1 and dicas_pedidas >= 3:
                 monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas)
                 print("Não possui mais dicas para consultar")
 
+            elif escolha == 1:
+                return "Dica %d: %s"%(dicas_pedidas + 1, dicas[dicas_pedidas])
             else:
-                return escolha
+                return ""
         except:
             monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas)
             print("Opção inválida")
@@ -108,12 +126,11 @@ def ler_registro():
 def armazenar(palavra, vencedor, perdedor):
     try:
         conteudo = ler_registro()
-        conteudo.append("Palavra: %s - Vencedor: %s, Perdedor: %s\n"%(palavra, vencedor, perdedor))
-        registrar(''.join(conteudo))
     except:
         conteudo = []
-        conteudo.append("Palavra: %s - Vencedor: %s, Perdedor: %s\n"%(palavra, vencedor, perdedor))
-        registrar(''.join(conteudo))
+        
+    conteudo.append("Palavra: %s - Vencedor: %s, Perdedor: %s\n"%(palavra, vencedor, perdedor))
+    registrar(''.join(conteudo))
 
 def escolha_jogo(vencedor, nome_vencedor, dados):
     while True:
@@ -123,8 +140,13 @@ def escolha_jogo(vencedor, nome_vencedor, dados):
             if opcao_usuario < 0 or opcao_usuario > 1:
                 mostrar_vitoria(vencedor, nome_vencedor, dados)
                 print("Opção inválida")
-            elif opcao_usuario != " ":
+
+            else:
                 return opcao_usuario
         except:
             mostrar_vitoria(vencedor, nome_vencedor, dados)
             print("Opção inválida")
+
+def remove_acento(string: str) -> str:
+    normalized = unicodedata.normalize('NFD', string)
+    return normalized.encode('ascii', 'ignore').decode('utf8')
