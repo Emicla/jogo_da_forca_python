@@ -1,1 +1,2 @@
-# jogo_da_forca_python
+# Jogo da Forca :video_game: 
+ - Em Python :snake:
