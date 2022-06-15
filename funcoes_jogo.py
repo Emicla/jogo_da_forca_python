@@ -1,4 +1,4 @@
-from funcoes_gerais import limpar, esperar, remove_acento
+from funcoes_gerais import limpar, esperar
 
 def monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas):
     limpar()
@@ -106,12 +106,9 @@ def opcoes_usuario(vidas, palavra_oculta, dicas_pedidas, dicas):
             monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas)
             print("Opção inválida")
 
-def verifica_letra(erros, vidas, letra_jogada, palavra_oculta, desafiante, competidor, palavra_chave):
+def verifica_letra(letra_jogada, palavra_oculta, palavra_chave, palavra_sem_acento):
     errou = True
     nova_oculta = ""
-    palavra_sem_acento = remove_acento(palavra_chave)
-    ganhador = ["Competidor", competidor, 0]
-    quantidade_erros = erros
 
     if letra_jogada.lower() == palavra_chave.lower() or letra_jogada.lower() == palavra_sem_acento.lower():
         nova_oculta = palavra_chave
@@ -130,18 +127,25 @@ def verifica_letra(erros, vidas, letra_jogada, palavra_oculta, desafiante, compe
             else:
                 nova_oculta = nova_oculta + palavra_chave[posicao]
 
-        if errou == True and quantidade_erros < 4:
-            quantidade_erros = quantidade_erros + 1
-            vidas[quantidade_erros - 1] = " "
-            limpar()
-            print("Erro: %d/5"%quantidade_erros)
-            esperar(1)
-                
-        elif errou == True and quantidade_erros >= 4:
-            quantidade_erros = quantidade_erros + 1
-            ganhador = ["Desafiante", desafiante, 1]
+    return [errou, nova_oculta]
 
-    return [quantidade_erros, vidas, ganhador, nova_oculta]
+def verifica_errou(se_errou, quantidade_erros, desafiante, competidor, vidas):
+
+    ganhador = ["Competidor", competidor, 0]
+
+    if se_errou == True and quantidade_erros < 4:
+        quantidade_erros = quantidade_erros + 1
+        vidas[quantidade_erros - 1] = " "
+        limpar()
+        print("Erro: %d/5"%quantidade_erros)
+        esperar(1)
+                
+    elif se_errou == True and quantidade_erros >= 4:
+        quantidade_erros = quantidade_erros + 1
+        ganhador = ["Desafiante", desafiante, 1]
+    
+    return [ganhador, quantidade_erros, vidas]
+
 
 def registrar(informacoes):
     arquivo = open("Registro de partidas.txt", "w")
