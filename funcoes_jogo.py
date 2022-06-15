@@ -1,10 +1,4 @@
-import os, time, unicodedata
-
-def limpar():
-    os.system("cls")
-
-def esperar(segundos):
-    time.sleep(segundos)
+from funcoes_gerais import limpar, esperar, remove_acento
 
 def monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas):
     limpar()
@@ -112,6 +106,43 @@ def opcoes_usuario(vidas, palavra_oculta, dicas_pedidas, dicas):
             monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas)
             print("Opção inválida")
 
+def verifica_letra(erros, vidas, letra_jogada, palavra_oculta, desafiante, competidor, palavra_chave):
+    errou = True
+    nova_oculta = ""
+    palavra_sem_acento = remove_acento(palavra_chave)
+    ganhador = ["Competidor", competidor, 0]
+    quantidade_erros = erros
+
+    if letra_jogada.lower() == palavra_chave.lower() or letra_jogada.lower() == palavra_sem_acento.lower():
+        nova_oculta = palavra_chave
+
+    else:
+        for posicao, letra in enumerate(palavra_sem_acento):
+            if letra.lower() != letra_jogada.lower() and palavra_oculta[posicao] == "*":
+                nova_oculta = nova_oculta + "*"
+
+            elif letra_jogada.lower() == letra.lower() and palavra_oculta[posicao] == "*":
+                nova_oculta = nova_oculta + palavra_chave[posicao]
+                errou = False
+                
+            elif letra == " ":
+                nova_oculta = nova_oculta + " "
+            else:
+                nova_oculta = nova_oculta + palavra_chave[posicao]
+
+        if errou == True and quantidade_erros < 4:
+            quantidade_erros = quantidade_erros + 1
+            vidas[quantidade_erros - 1] = " "
+            limpar()
+            print("Erro: %d/5"%quantidade_erros)
+            esperar(1)
+                
+        elif errou == True and quantidade_erros >= 4:
+            quantidade_erros = quantidade_erros + 1
+            ganhador = ["Desafiante", desafiante, 1]
+
+    return [quantidade_erros, vidas, ganhador, nova_oculta]
+
 def registrar(informacoes):
     arquivo = open("Registro de partidas.txt", "w")
     arquivo.write(informacoes)
@@ -133,6 +164,7 @@ def armazenar(palavra, vencedor, perdedor):
     registrar(''.join(conteudo))
 
 def escolha_jogo(vencedor, nome_vencedor, dados):
+    mostrar_vitoria(vencedor, nome_vencedor, dados)
     while True:
         try:
             opcao_usuario = int(input("Informe sua escolha: "))
@@ -146,7 +178,3 @@ def escolha_jogo(vencedor, nome_vencedor, dados):
         except:
             mostrar_vitoria(vencedor, nome_vencedor, dados)
             print("Opção inválida")
-
-def remove_acento(string: str) -> str:
-    normalized = unicodedata.normalize('NFD', string)
-    return normalized.encode('ascii', 'ignore').decode('utf8')
