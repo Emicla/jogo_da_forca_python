@@ -1,4 +1,4 @@
-from funcoes_gerais import limpar, esperar
+from funcoes.funcoes_gerais import limpar, esperar
 
 def monta_tabuleiro(vidas, palavra_oculta, dicas_pedidas):
     limpar()
@@ -112,7 +112,7 @@ def verifica_letra(letra_jogada, palavra_oculta, palavra_chave, palavra_sem_acen
 
     if letra_jogada.lower() == palavra_chave.lower() or letra_jogada.lower() == palavra_sem_acento.lower():
         nova_oculta = palavra_chave
-
+        errou = False
     else:
         for posicao, letra in enumerate(palavra_sem_acento):
             if letra.lower() != letra_jogada.lower() and palavra_oculta[posicao] == "*":

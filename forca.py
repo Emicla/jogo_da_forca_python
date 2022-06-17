@@ -1,5 +1,5 @@
-from funcoes_jogo import limpar, pede_dados, monta_oculta, pede_dicas, monta_tabuleiro, opcoes_usuario, armazenar, escolha_jogo, verifica_letra, verifica_errou
-from funcoes_gerais import remove_acento
+from funcoes.funcoes_jogo import limpar, pede_dados, monta_oculta, pede_dicas, monta_tabuleiro, opcoes_usuario, armazenar, escolha_jogo, verifica_letra, verifica_errou
+from funcoes.funcoes_gerais import remove_acento
 
 perguntas = ["Informe o nome do Desafiante: ", "Informe o nome do Competidor: ", "Informe a palavra chave: "]
 
